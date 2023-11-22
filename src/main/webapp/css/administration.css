@@ -1,0 +1,104 @@
+body {
+    margin: 0px;
+    background-color: #2c2b2b;
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+h1 {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  table {
+  margin-top:40px;
+    width: 100%;
+    border-collapse: collapse;
+    text-shadow:  2px 2px 4px rgba(40, 1, 38, 0.5);
+    margin: 20px;
+    margin-bottom: 40px;
+  }
+
+  table thead th {
+    background-color: #a09f9f;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border: 3px solid #747373;
+  }
+
+  table tbody td {
+    font-size: 20px;
+    color:rgb(220, 219, 221);
+    padding: 10px;
+    border: 3px solid #747373;
+  }
+
+  table tbody tr:nth-child(even) {
+    background-color: #828181;
+  }
+
+  table tbody tr:hover {
+    background-color: #4d016d;
+    cursor: pointer;
+  }
+
+  .formDel{
+    width: 700px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    margin-left: 440px;
+  }
+
+  .del{
+    font-size: 18px;
+    font-weight: 600;
+    text-shadow: 1px 1px 1px black;
+  }
+
+  input{
+    height: 30px;
+    margin-left: 10px;
+    background-color: rgb(159, 157, 157);
+    color: #2c2b2b;
+    margin-right: 10px;
+    border-radius: 5px;
+  }
+
+  button{
+    height: 30px;
+    background-color: #f33;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #fff;
+    color: #f33;
+  }
+
+  .error {
+    color: #ca1a1a;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+    font-weight: 700;
+    font-size: 16px;
+    margin-left: 150px;
+    padding: 5px;
+    margin-top: 15px;
+  }
+
+  .success{
+    color: #03ea35;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+    font-weight: 700;
+    font-size: 16px;
+    margin-left: 150px;
+    padding: 5px;
+    margin-top: 15px;
+  }

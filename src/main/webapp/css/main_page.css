@@ -1,0 +1,31 @@
+ body {
+      background-color: #fde9ec; !important/* Розовый фон */
+    }
+    
+    .row {
+      background-color: rgb(232, 215, 218); /* Белый фон */
+      border-radius: 10px; /* Закругленные углы */
+      transition: background-color 0.3s ease;
+      margin-top: 15px !important;
+      margin-bottom: 30px !important;
+      height: 250px;
+      
+    }
+    .a-news{
+      text-decoration: none;
+      color: inherit;
+    }
+   
+    .row:hover {
+      background-color: rgb(255, 157, 157); /* Изменение цвета при наведении */
+    }
+    
+    .img-fluid{
+		height: 250px !important;
+		width: 300px;
+		border-radius: 10px;
+	}
+    
+    .card-title {
+      color: #ff0000; /* Красный цвет заголовка */
+    }
