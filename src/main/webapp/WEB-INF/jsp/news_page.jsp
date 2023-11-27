@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-import="by.yachnikzakhar.beans.News"
+import="by.yachnikzakhar.newsmanagement.beans.News"
 pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html>
