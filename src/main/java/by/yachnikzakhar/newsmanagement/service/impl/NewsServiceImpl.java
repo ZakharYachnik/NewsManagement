@@ -23,22 +23,24 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public News getById(int id) throws ServiceException {
-        try{
-            return newsDAO.getById(id);
-        }
-        catch (DAOException exception){
-            throw new ServiceException(exception);
-        }
+//        try{
+//            return newsDAO.getById(id);
+//        }
+//        catch (DAOException exception){
+//            throw new ServiceException(exception);
+//        }
+        return null;
     }
 
     @Override
     public List<News> getAll() throws ServiceException {
-        try{
-            return newsDAO.getAll();
-        }
-        catch (DAOException exception){
-            throw new ServiceException(exception);
-        }
+//        try{
+//            return newsDAO.getAll();
+//        }
+//        catch (DAOException exception){
+//            throw new ServiceException(exception);
+//        }
+        return null;
     }
 
     @Override
@@ -53,11 +55,11 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public void remove(News user) throws ServiceException {
-        try{
-            newsDAO.remove(user);
-        }
-        catch (DAOException exception){
-            throw new ServiceException(exception);
-        }
+//        try{
+//            newsDAO.block(user);
+//        }
+//        catch (DAOException exception){
+//            throw new ServiceException(exception);
+//        }
     }
 }

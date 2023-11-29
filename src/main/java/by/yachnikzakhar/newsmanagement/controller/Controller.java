@@ -1,5 +1,7 @@
 package by.yachnikzakhar.newsmanagement.controller;
 
+import by.yachnikzakhar.newsmanagement.dao.connection.ConnectionPool;
+import by.yachnikzakhar.newsmanagement.dao.connection.ConnectionPoolException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +12,13 @@ import java.io.IOException;
 public class Controller extends HttpServlet {
 
     private final CommandProvider provider = CommandProvider.getInstance();
+
+    @Override
+    public void destroy() {
+        ConnectionPool.getInstance().dispose();
+        super.destroy();
+    }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

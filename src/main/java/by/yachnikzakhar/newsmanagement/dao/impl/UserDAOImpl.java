@@ -1,6 +1,8 @@
 package by.yachnikzakhar.newsmanagement.dao.impl;
 
 import by.yachnikzakhar.newsmanagement.beans.User;
+import by.yachnikzakhar.newsmanagement.dao.connection.ConnectionPool;
+import by.yachnikzakhar.newsmanagement.dao.connection.ConnectionPoolException;
 import by.yachnikzakhar.newsmanagement.dao.exceptions.DAOException;
 import by.yachnikzakhar.newsmanagement.dao.UserDAO;
 import by.yachnikzakhar.newsmanagement.dao.exceptions.UserNotFoundException;
@@ -31,13 +33,14 @@ public class UserDAOImpl implements UserDAO {
     private static final String UPDATE_USER_QUERY = "update users set login=?, password=?, full_name=?, phone_number=?, email=?, status=? where id=?";
     private static final String BLOCK_USER_QUERY = "update users set status=? where id=?";
 
+    private final ConnectionPool connectionPool = ConnectionPool.getInstance();
+
     @Override
     public void add(User user) throws DAOException {
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
 
-        try(Connection connection = ConnectionFactory.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY); )
-        {
+        try (Connection connection = connectionPool.takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY);) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getFullName());
@@ -50,7 +53,7 @@ public class UserDAOImpl implements UserDAO {
             if (result == 0) {
                 throw new DAOException("User registration error in the system");
             }
-        }catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             e.printStackTrace();
             throw new DAOException("User registration process error", e);
         }
@@ -60,11 +63,11 @@ public class UserDAOImpl implements UserDAO {
     public User authentication(String login, String password) throws DAOException, UserNotFoundException {
         User user = getByLogin(login);
 
-        if(!BCrypt.checkpw(password, user.getPassword())){
+        if (!BCrypt.checkpw(password, user.getPassword())) {
             throw new DAOException("Wrong password");
         }
 
-        if(user.getStatus().equalsIgnoreCase(STATUS_BLOCKED)){
+        if (user.getStatus().equalsIgnoreCase(STATUS_BLOCKED)) {
             throw new UserNotFoundException("The user is blocked");
         }
         return user;
@@ -81,14 +84,14 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User getByLogin(String login) throws UserNotFoundException, DAOException{
-        try(Connection connection = ConnectionFactory.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_LOGIN_QUERY);
-            ){
+    public User getByLogin(String login) throws UserNotFoundException, DAOException {
+        try (Connection connection = connectionPool.takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_LOGIN_QUERY);
+        ) {
             preparedStatement.setString(1, login);
 
-            try(ResultSet resultSet = preparedStatement.executeQuery()){
-                if(!resultSet.next()){
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (!resultSet.next()) {
                     throw new UserNotFoundException("The user with this login was not found");
                 }
 
@@ -102,20 +105,20 @@ public class UserDAOImpl implements UserDAO {
                         resultSet.getString(COLUMN_STATUS)
                 );
             }
-        }catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException(e);
         }
     }
 
     @Override
     public User getById(int id) throws UserNotFoundException, DAOException {
-        try(Connection connection = ConnectionFactory.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID_QUERY);
-        ){
+        try (Connection connection = connectionPool.takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID_QUERY);
+        ) {
             preparedStatement.setInt(1, id);
 
-            try(ResultSet resultSet = preparedStatement.executeQuery()){
-                if(!resultSet.next()){
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (!resultSet.next()) {
                     throw new UserNotFoundException("The user with this id was not found");
                 }
 
@@ -129,20 +132,20 @@ public class UserDAOImpl implements UserDAO {
                         resultSet.getString(COLUMN_STATUS)
                 );
             }
-        }catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException(e);
         }
     }
 
     @Override
     public List<User> getAll() throws DAOException {
-        try(Connection connection = ConnectionFactory.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS_QUERY);
-        ){
+        try (Connection connection = connectionPool.takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS_QUERY);
+        ) {
 
-            try(ResultSet resultSet = preparedStatement.executeQuery()){
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 List<User> userList = new ArrayList<>();
-                while(resultSet.next()){
+                while (resultSet.next()) {
                     userList.add(new User(
                             resultSet.getInt(COLUMN_ID),
                             resultSet.getString(COLUMN_LOGIN),
@@ -155,16 +158,16 @@ public class UserDAOImpl implements UserDAO {
                 }
                 return userList;
             }
-        }catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException(e);
         }
     }
 
     @Override
     public void update(User user) throws DAOException {
-        try (Connection connection = ConnectionFactory.getConnection();
+        try (Connection connection = connectionPool.takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_QUERY)) {
-            
+
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getFullName());
@@ -178,14 +181,14 @@ public class UserDAOImpl implements UserDAO {
             if (result == 0) {
                 throw new DAOException("User update error in the system");
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("User update process error", e);
         }
     }
 
     @Override
     public void block(User user) throws DAOException {
-        try (Connection connection = ConnectionFactory.getConnection();
+        try (Connection connection = connectionPool.takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(BLOCK_USER_QUERY)) {
 
             preparedStatement.setString(1, STATUS_BLOCKED);
@@ -196,7 +199,7 @@ public class UserDAOImpl implements UserDAO {
             if (result == 0) {
                 throw new DAOException("User block error in the system");
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("User block process error", e);
         }
     }

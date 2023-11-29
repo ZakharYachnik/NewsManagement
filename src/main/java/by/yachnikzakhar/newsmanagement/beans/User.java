@@ -126,6 +126,10 @@ public class User {
         this.roles = roles;
     }
 
+    public boolean isAdmin(){
+        return roles.contains(Roles.ADMIN.toString());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

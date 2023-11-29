@@ -26,7 +26,7 @@ import="by.yachnikzakhar.newsmanagement.beans.User" pageEncoding="utf-8"%>
             <% } else { %>
             <li class="header_li"><a href="Controller?command=go_to_add_news" class="button add">Добавить новость</a>
             </li>
-            <% if (((User) request.getAttribute("user")).getRoleId() == 2) { %>
+            <% if (((User) request.getAttribute("user")).isAdmin()) { %>
             <li class="header_li"><a href="Controller?command=go_to_administration" class="button administration add">Администрирование</a></li>
             <li class="header_li"><a href="Controller?command=logout" class="button logout-with-add login">Выйти</a></li>
             <% } else {%>

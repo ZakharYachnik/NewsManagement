@@ -11,16 +11,29 @@ public class News {
     private LocalDate publicationDate;
     private String brief;
     private String content;
+    private String status;
+    private int userId;
 
     public News() {
     }
 
-    public News(int id, String title, LocalDate publicationDate, String brief, String content) {
+    public News(int id, String title, LocalDate publicationDate, String brief, String content, String status, int userId) {
         this.id = id;
         this.title = title;
         this.publicationDate = publicationDate;
         this.brief = brief;
         this.content = content;
+        this.status = status;
+        this.userId = userId;
+    }
+
+    public News(String title, LocalDate publicationDate, String brief, String content, String status, int userId) {
+        this.title = title;
+        this.publicationDate = publicationDate;
+        this.brief = brief;
+        this.content = content;
+        this.status = status;
+        this.userId = userId;
     }
 
     public int getId() {
@@ -63,16 +76,32 @@ public class News {
         this.content = content;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         News news = (News) o;
-        return getId() == news.getId() && Objects.equals(getTitle(), news.getTitle()) && Objects.equals(getDate(), news.getDate()) && Objects.equals(getBrief(), news.getBrief()) && Objects.equals(getContent(), news.getContent());
+        return getId() == news.getId() && Objects.equals(getTitle(), news.getTitle()) && Objects.equals(getPublicationDate(), news.getPublicationDate()) && Objects.equals(getBrief(), news.getBrief()) && Objects.equals(getContent(), news.getContent());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getDate(), getBrief(), getContent());
+        return Objects.hash(getId(), getTitle(), getPublicationDate(), getBrief(), getContent());
     }
 }
