@@ -6,7 +6,7 @@ pageEncoding="utf-8"%>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Form</title>
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/sing_in_reg.css">
 </head>
 <body>
 <div class="container">
@@ -33,10 +33,17 @@ pageEncoding="utf-8"%>
             <input type="submit" id="button" value="Зарегистрироваться">
         </form>
         <%
-        if (request.getAttribute("error") != null && !((String)request.getAttribute("error")).isEmpty()) {
+        if (request.getParameter("error") != null) {
+            if(((String)request.getParameter("error")).equals("validation_error")){
         %>
-        <p><%= request.getAttribute("error") %></p>
+        <p>Данные введены некорректно!</p>
         <%
+        }
+        if(((String)request.getParameter("error")).equals("registration_error")){
+        %>
+        <p>Логин занят!</p>
+        <%
+        }
         }
         %>
     </div>

@@ -1,12 +1,13 @@
 package by.yachnikzakhar.newsmanagement.dao.connection;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class DBResourceManager {
 	
 	private final static DBResourceManager instance = new DBResourceManager();
 
-	ResourceBundle jdbcProperties = ResourceBundle.getBundle("src/main/resources/db.properties");
+	private ResourceBundle jdbcProperties = ResourceBundle.getBundle("db");
 
 	public static DBResourceManager getInstance() {
 		return instance;

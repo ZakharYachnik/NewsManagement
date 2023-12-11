@@ -13,62 +13,65 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
     private final UserDAO userDAO = DAOProvider.getInstance().getUserDAO();
+
     @Override
     public void add(User user) throws ServiceException {
-        try{
-            userDAO.add(user);
-        }
-        catch (DAOException exception){
+        try {
+            userDAO.getByLogin(user.getLogin());
+            throw new ServiceException("User with this login already exists");
+        } catch (UserNotFoundException e) {
+            try {
+                userDAO.add(user);
+            } catch (DAOException exception) {
+                throw new ServiceException(exception);
+            }
+        }catch (DAOException exception) {
             throw new ServiceException(exception);
         }
+
     }
 
     @Override
     public User getById(int id) throws ServiceException {
-        try{
+        try {
             return userDAO.getById(id);
-        }
-        catch (DAOException | UserNotFoundException exception){
+        } catch (DAOException | UserNotFoundException exception) {
             throw new ServiceException(exception);
         }
     }
 
     @Override
     public List<User> getAll() throws ServiceException {
-        try{
+        try {
             return userDAO.getAll();
-        }
-        catch (DAOException exception){
+        } catch (DAOException exception) {
             throw new ServiceException(exception);
         }
     }
 
     @Override
     public void update(User user) throws ServiceException {
-        try{
+        try {
             userDAO.update(user);
-        }
-        catch (DAOException exception){
+        } catch (DAOException exception) {
             throw new ServiceException(exception);
         }
     }
 
     @Override
     public void remove(User user) throws ServiceException {
-        try{
+        try {
             userDAO.block(user);
-        }
-        catch (DAOException exception){
+        } catch (DAOException exception) {
             throw new ServiceException(exception);
         }
     }
 
     @Override
     public User authentication(String login, String password) throws ServiceException {
-        try{
+        try {
             return userDAO.authentication(login, password);
-        }
-        catch (DAOException | UserNotFoundException exception){
+        } catch (DAOException | UserNotFoundException exception) {
             throw new ServiceException(exception);
         }
     }

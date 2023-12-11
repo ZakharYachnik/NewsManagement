@@ -17,16 +17,16 @@ import="by.yachnikzakhar.newsmanagement.beans.User" pageEncoding="utf-8"%>
         <ul class="header_ul">
             <h1>News Management</h1>
 
-            <% if (request.getAttribute("user") == null) { %>
+            <% if (request.getSession(false) == null || request.getSession().getAttribute("userId") == null) { %>
             <li class="header_li"><a href="Controller?command=go_to_add_news" class="button add">Добавить новость</a>
             </li>
-            <li class="header_li"><a href="Controller?command=go_to_sing_in" class="button login">Авторизация</a></li>
+            <li class="header_li"><a href="Controller?command=go_to_sign_in" class="button login">Авторизация</a></li>
             <li class="header_li"><a href="Controller?command=go_to_registration" class="button registration">Регистрация</a>
             </li>
             <% } else { %>
             <li class="header_li"><a href="Controller?command=go_to_add_news" class="button add">Добавить новость</a>
             </li>
-            <% if (((User) request.getAttribute("user")).isAdmin()) { %>
+            <% if ((Boolean) request.getSession().getAttribute("isAdmin")) { %>
             <li class="header_li"><a href="Controller?command=go_to_administration" class="button administration add">Администрирование</a></li>
             <li class="header_li"><a href="Controller?command=logout" class="button logout-with-add login">Выйти</a></li>
             <% } else {%>

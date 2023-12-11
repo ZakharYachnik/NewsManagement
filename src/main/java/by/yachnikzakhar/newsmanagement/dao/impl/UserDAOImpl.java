@@ -1,5 +1,6 @@
 package by.yachnikzakhar.newsmanagement.dao.impl;
 
+import by.yachnikzakhar.newsmanagement.beans.Roles;
 import by.yachnikzakhar.newsmanagement.beans.User;
 import by.yachnikzakhar.newsmanagement.dao.connection.ConnectionPool;
 import by.yachnikzakhar.newsmanagement.dao.connection.ConnectionPoolException;
@@ -9,10 +10,7 @@ import by.yachnikzakhar.newsmanagement.dao.exceptions.UserNotFoundException;
 import by.yachnikzakhar.newsmanagement.service.ServiceException;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,30 +30,77 @@ public class UserDAOImpl implements UserDAO {
     private static final String SELECT_ALL_USERS_QUERY = "select * from users";
     private static final String UPDATE_USER_QUERY = "update users set login=?, password=?, full_name=?, phone_number=?, email=?, status=? where id=?";
     private static final String BLOCK_USER_QUERY = "update users set status=? where id=?";
+    private static final String SELECT_USER_ROLES_QUERY = "select r.role from roles r join users_has_roles ur on r.id = ur.roles_id join users u on u.id = ur.users_id where u.id = ?";
+    private static final String INSERT_USER_ROLE_QUERY = "insert into users_has_roles (users_id, roles_id) values(?, ?)";
 
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
     @Override
     public void add(User user) throws DAOException {
-        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+        Connection connection = null;
+        int generatedId;
 
-        try (Connection connection = connectionPool.takeConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY);) {
-            preparedStatement.setString(1, user.getLogin());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setString(3, user.getFullName());
-            preparedStatement.setString(4, user.getPhoneNumber());
-            preparedStatement.setString(5, user.getEmail());
-            preparedStatement.setString(6, user.getStatus());
+        try {
+            connection = connectionPool.takeConnection();
+            connection.setAutoCommit(false);
 
-            int result = preparedStatement.executeUpdate();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, user.getLogin());
+                preparedStatement.setString(2, BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+                preparedStatement.setString(3, user.getFullName());
+                preparedStatement.setString(4, user.getPhoneNumber());
+                preparedStatement.setString(5, user.getEmail());
+                preparedStatement.setString(6, user.getStatus());
 
-            if (result == 0) {
-                throw new DAOException("User registration error in the system");
+                int result = preparedStatement.executeUpdate();
+
+                if (result == 0) {
+                    throw new DAOException("User registration error in the system");
+                }
+
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                generatedKeys.next();
+                generatedId = generatedKeys.getInt(1);
+                generatedKeys.close();
             }
+
+            insertUserRoles(generatedId, user.getRoles(), connection);
+
+            connection.commit();
         } catch (SQLException | ConnectionPoolException e) {
-            e.printStackTrace();
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    throw new DAOException("Transaction rollback error", e);
+                }
+            }
             throw new DAOException("User registration process error", e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    private void insertUserRoles(int userId, List<String> roles, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_ROLE_QUERY)) {
+
+            for (String role : roles) {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setInt(2, Roles.valueOf(role).ordinal() + 1);
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+        } catch (SQLException e) {
+            throw new SQLException("User roles insert error", e);
         }
     }
 
@@ -70,6 +115,8 @@ public class UserDAOImpl implements UserDAO {
         if (user.getStatus().equalsIgnoreCase(STATUS_BLOCKED)) {
             throw new UserNotFoundException("The user is blocked");
         }
+
+        user.setRoles(getUserRolesById(user.getId()));
         return user;
     }
 
@@ -201,6 +248,31 @@ public class UserDAOImpl implements UserDAO {
             }
         } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("User block process error", e);
+        }
+    }
+
+
+    @Override
+    public List<String> getUserRolesById(int userId) throws DAOException {
+        try (Connection connection = connectionPool.takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_ROLES_QUERY)) {
+
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (!resultSet.next()) {
+                throw new DAOException("User roles not found");
+            }
+
+            List<String> roles = new ArrayList<>();
+
+            do {
+                roles.add(resultSet.getString(1));
+            } while (resultSet.next());
+
+            return roles;
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException(e);
         }
     }
 }

@@ -1,9 +1,15 @@
 package by.yachnikzakhar.newsmanagement.beans;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class User {
+public class User implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -8821534189706727434L;
+
     private int id;
     private String login;
     private String password;
@@ -126,7 +132,7 @@ public class User {
         this.roles = roles;
     }
 
-    public boolean isAdmin(){
+    public boolean isAdmin() {
         return roles.contains(Roles.ADMIN.toString());
     }
 
@@ -135,16 +141,16 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return getId() == user.getId() &&
-                getLogin().equals(user.getLogin()) &&
-                getPassword().equals(user.getPassword()) &&
-                Objects.equals(getFullName(), user.getFullName()) &&
-                Objects.equals(getPhoneNumber(), user.getPhoneNumber()) &&
-                Objects.equals(getEmail(), user.getEmail());
+        return id == user.id && Objects.equals(login, user.login) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(fullName, user.fullName) &&
+                Objects.equals(phoneNumber, user.phoneNumber) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(status, user.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getLogin(), getPassword(), getFullName(), getPhoneNumber(), getEmail());
+        return Objects.hash(id, login, password, fullName, phoneNumber, email, status, roles);
     }
 }

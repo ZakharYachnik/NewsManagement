@@ -26,9 +26,12 @@ import java.util.concurrent.Executor;
 
 public final class ConnectionPool {
 
-    private static final ConnectionPool instance = new ConnectionPool();
+    private static ConnectionPool instance;
 
     public static ConnectionPool getInstance() {
+        if(instance == null) {
+            instance = new ConnectionPool();
+        }
         return instance;
     }
 
@@ -50,15 +53,9 @@ public final class ConnectionPool {
         this.password = dbResourceManager.getValue(DBParameter.DB_PASSWORD);
 
         this.poolSize = Integer.parseInt(dbResourceManager.getValue(DBParameter.DB_POOL_SIZE));
-        try {
-            initPoolData();
-        } catch (ConnectionPoolException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
     }
 
-    private void initPoolData() throws ConnectionPoolException {
+    public void initPoolData() throws ConnectionPoolException {
         try {
             Class.forName(driverName);
 
@@ -89,8 +86,12 @@ public final class ConnectionPool {
 
     private void clearConnectionQueue() throws ConnectionPoolException {
         try {
-            closeConnectionsQueue(givenAwayConQueue);
-            closeConnectionsQueue(connectionQueue);
+            BlockingQueue<Connection> allConnectionsQueue = new ArrayBlockingQueue<Connection>(poolSize);
+            allConnectionsQueue.addAll(connectionQueue);
+            allConnectionsQueue.addAll(givenAwayConQueue);
+            givenAwayConQueue = null;
+            connectionQueue = null;
+            closeConnectionsQueue(allConnectionsQueue);
         } catch (SQLException e) {
             // logger.log
             throw new ConnectionPoolException("Error closing connection queue", e);
@@ -109,13 +110,14 @@ public final class ConnectionPool {
     }
 
     public void closeConnection(ResultSet rs, PreparedStatement st, Connection con) throws ConnectionPoolException {
+        String errorMessage = "";
         try {
             if (rs != null) {
                 rs.close();
             }
         } catch (SQLException e) {
             //logger.log
-            throw new ConnectionPoolException("Error closing result set", e);
+            errorMessage += "Error closing result set ";
         }
         try {
             if (st != null) {
@@ -123,34 +125,44 @@ public final class ConnectionPool {
             }
         } catch (SQLException e) {
             //logger.log
-            throw new ConnectionPoolException("Error closing prepared statement", e);
+            errorMessage += "Error closing prepared statement ";
         }
         try {
-            if (con != null) {
+            if (con != null && con.getClass() == PooledConnection.class) {
                 con.close();
             }
         } catch (SQLException e) {
             //logger.log
-            throw new ConnectionPoolException("Error closing connection", e);
+            errorMessage += "Error closing connection";
+        }
+
+        if (!errorMessage.isEmpty()) {
+            throw new ConnectionPoolException(errorMessage);
         }
     }
 
     public void closeConnection(PreparedStatement st, Connection con) throws ConnectionPoolException {
+        String errorMessage = "";
+
         try {
             if (st != null) {
                 st.close();
             }
         } catch (SQLException e) {
             //logger.log
-            throw new ConnectionPoolException("Error closing prepared statement", e);
+            errorMessage += "Error closing prepared statement ";
         }
         try {
-            if (con != null) {
+            if (con != null && con.getClass() == PooledConnection.class) {
                 con.close();
             }
         } catch (SQLException e) {
             //logger.log
-            throw new RuntimeException("Error closing connection", e);
+            errorMessage += "Error closing connection";
+        }
+
+        if (!errorMessage.isEmpty()) {
+            throw new ConnectionPoolException(errorMessage);
         }
     }
 

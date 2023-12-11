@@ -1,10 +1,14 @@
 package by.yachnikzakhar.newsmanagement.beans;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
-public class News {
+public class News implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -7727223409531121595L;
 
     private int id;
     private String title;
@@ -97,11 +101,11 @@ public class News {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         News news = (News) o;
-        return getId() == news.getId() && Objects.equals(getTitle(), news.getTitle()) && Objects.equals(getPublicationDate(), news.getPublicationDate()) && Objects.equals(getBrief(), news.getBrief()) && Objects.equals(getContent(), news.getContent());
+        return getId() == news.id && Objects.equals(title, news.title) && Objects.equals(publicationDate, news.publicationDate) && Objects.equals(brief, news.brief) && Objects.equals(content, news.content) && Objects.equals(status, news.status) && Objects.equals(userId, news.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getPublicationDate(), getBrief(), getContent());
+        return Objects.hash(id, title, publicationDate, brief, content, status, userId);
     }
 }

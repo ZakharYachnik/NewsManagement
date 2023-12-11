@@ -1,8 +1,11 @@
 package by.yachnikzakhar.newsmanagement.dao.connection;
 
+import java.io.Serial;
+
 public class ConnectionPoolException extends Exception{
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 991793500838231109L;
 
 	public ConnectionPoolException (String message, Exception e) {
 		super(message, e);

@@ -17,4 +17,6 @@ public interface UserDAO {
     void block(User user) throws DAOException;
 
     User authentication(String login, String password) throws DAOException, UserNotFoundException;
+
+    List<String> getUserRolesById(int userId) throws DAOException;
 }

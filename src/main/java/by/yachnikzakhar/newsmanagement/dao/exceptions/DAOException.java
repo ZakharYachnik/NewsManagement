@@ -1,6 +1,11 @@
 package by.yachnikzakhar.newsmanagement.dao.exceptions;
 
+import java.io.Serial;
+
 public class DAOException extends Exception {
+    @Serial
+    private static final long serialVersionUID = -3874524655572981888L;
+
     public DAOException() {
         super();
     }

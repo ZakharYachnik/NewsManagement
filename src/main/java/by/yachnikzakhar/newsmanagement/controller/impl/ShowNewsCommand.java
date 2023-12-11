@@ -23,7 +23,5 @@ public class ShowNewsCommand implements Command {
             System.err.println("Ошибка получения новости!");
             response.sendRedirect("WEB-INF/jsp/error.jsp");
         }
-
-
     }
 }

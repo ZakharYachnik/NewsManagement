@@ -64,4 +64,21 @@ input {
     background: #b73101;
 }
 
+.registration-link {
+    color: #555; /* Темносерый цвет текста */
+    text-decoration: none; /* Убираем подчеркивание */
+    display: inline-block;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px #888; /* Тень */
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s; /* Плавные переходы */
+
+}
+
+.registration-link:hover {
+    background-color: #eee; /* Цвет фона при наведении */
+    color: #333; /* Цвет текста при наведении */
+    box-shadow: 2px 2px 10px #888; /* Увеличенная тень при наведении */
+}
+
 

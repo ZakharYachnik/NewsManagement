@@ -7,10 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class GoToSIngInCommand implements Command {
+public class GoToSignInCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("WEB-INF/jsp/sing_in_page.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/jsp/sign_in_page.jsp").forward(request, response);
     }
 }
