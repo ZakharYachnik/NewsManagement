@@ -122,7 +122,7 @@ import="by.yachnikzakhar.newsmanagement.beans.User" pageEncoding="utf-8"%>
                 </ul>
             </div>
         </div>
-        <p class="footer__copy">&copy; 2023 NewsManagment. Все права защищены.</p>
+        <p class="footer__copy">&copy; 2023 NewsManagement. Все права защищены.</p>
     </div>
 </footer>
 </body>

@@ -10,10 +10,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import static by.yachnikzakhar.newsmanagement.controller.session.SessionConstants.PREV_REQUEST;
+
 public class GoToAdministration implements Command {
     UserService userService = ServiceProvider.getInstance().getUserService();
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String prevRequest = request.getRequestURI() + "?" + request.getQueryString();
+        request.getSession().setAttribute(PREV_REQUEST, prevRequest);
+
         try {
             request.setAttribute("users", userService.getAll());
             request.getRequestDispatcher("WEB-INF/jsp/administration.jsp").forward(request, response);

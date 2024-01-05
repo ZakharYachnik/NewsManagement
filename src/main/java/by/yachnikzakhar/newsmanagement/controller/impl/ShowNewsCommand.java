@@ -10,10 +10,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import static by.yachnikzakhar.newsmanagement.controller.session.SessionConstants.PREV_REQUEST;
+
 public class ShowNewsCommand implements Command {
     private NewsService newsService = ServiceProvider.getInstance().getNewsService();
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String prevRequest = request.getRequestURI() + "?" + request.getQueryString();
+        request.getSession().setAttribute(PREV_REQUEST, prevRequest);
+
         int id = Integer.parseInt(request.getParameter("id"));
 
         try {

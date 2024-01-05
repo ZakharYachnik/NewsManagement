@@ -1,4 +1,4 @@
-package by.yachnikzakhar.newsmanagement.controller.validators;
+package by.yachnikzakhar.newsmanagement.util.validation.impl;
 
 public class RegistrationValidator  {
     private static RegistrationValidator validator;

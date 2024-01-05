@@ -24,13 +24,11 @@ public class Controller extends HttpServlet {
         } catch (ConnectionPoolException e) {
             throw new RuntimeException(e);
         }
-        super.init(config);
     }
 
     @Override
     public void destroy() {
         ConnectionPool.getInstance().dispose();
-        super.destroy();
     }
 
 
