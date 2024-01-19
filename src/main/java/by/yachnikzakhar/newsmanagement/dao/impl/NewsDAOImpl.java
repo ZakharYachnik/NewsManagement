@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static by.yachnikzakhar.newsmanagement.controller.constants.StatusParameters.BLOCKED;
+
 public class NewsDAOImpl implements NewsDAO {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_TITLE = "title";
@@ -22,18 +24,17 @@ public class NewsDAOImpl implements NewsDAO {
     private static final String COLUMN_PUBLICATION_DATE = "publication_date";
     private static final String COLUMN_CONTENT = "content";
     private static final String COLUMN_STATUS = "status";
-    private static final String COLUMN_USER_ID = "user_id";
-    private static final String STATUS_BLOCKED = "BLOCKED";
+    private static final String COLUMN_USER_ID = "users_id";
 
-    private static final String INSERT_NEWS_QUERY = "insert into news(title, brief, publication_date, content, status, user_id) values(?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_NEWS_QUERY = "insert into news(title, brief, publication_date, content, status, users_id) values(?, ?, ?, ?, ?, ?)";
     private static final String SELECT_ALL_NEWS_QUERY = "select * from news";
     private static final String SELECT_NEWS_BY_ID_QUERY = "select * from news where id=?";
-    private static final String SELECT_NEWS_BY_USER_ID_QUERY = "select * from news where user_id=?";
+    private static final String SELECT_NEWS_BY_USER_ID_QUERY = "select * from news where users_id=?";
     private static final String SELECT_NEWS_BY_PUBLICATION_DATE_QUERY = "select * from news where publication_date=?";
     private static final String SELECT_NEWS_BY_TITLE_QUERY = "select * from news where title=?";
     private static final String SELECT_NEWS_IN_RANGE = "select * from news where id between ? and ?";
-    private static final String SELECT_NEWS_FROM_END = "select * from news order by id desc limit ?";
-    private static final String UPDATE_NEWS_QUERY = "update news set title=?, brief=?, publication_date=?, content=?, status=?, user_id=? where id=?";
+    private static final String SELECT_NEWS_FROM_END = "select * from news where status='active' order by id desc limit ? ";
+    private static final String UPDATE_NEWS_QUERY = "update news set title=?, brief=?, publication_date=?, content=?, status=?, users_id=? where id=?";
     private static final String BLOCK_NEWS_QUERY = "update news set status=? where id=?";
 
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
@@ -307,7 +308,7 @@ public class NewsDAOImpl implements NewsDAO {
         try (Connection connection = connectionPool.takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(BLOCK_NEWS_QUERY);) {
 
-            preparedStatement.setString(1, STATUS_BLOCKED);
+            preparedStatement.setString(1, BLOCKED);
             preparedStatement.setInt(2, id);
 
             int result = preparedStatement.executeUpdate();

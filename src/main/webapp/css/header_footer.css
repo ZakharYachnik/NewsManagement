@@ -46,22 +46,22 @@
 }
 
 .footer__social a {
-color: #c7c3c3;
-font-size: 15px;
+    color: #c7c3c3;
+    font-size: 15px;
 }
 
 .footer__social a:hover {
-color: #868585;
+    color: #868585;
 }
 
 .footer__copy {
-font-size: 15px;
-text-align: center;
+    font-size: 15px;
+    text-align: center;
 }
 
 .footer__logo {
-width: 150px;
-margin-bottom: 30px;
+    width: 150px;
+    margin-bottom: 30px;
 }
 
 .footer__nav a{
@@ -76,67 +76,73 @@ header {
     background-color: #232323;
     color: #fff;
 
-  }
-  
-  .header_nav{
+}
+
+.header_nav{
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-  }
-  
-  .header_ul{
+}
+
+.header_ul{
     display: flex;
     justify-content: center;
     align-items: center;
     list-style: none;
     margin: 0;
     padding: 0;
-  }
-  
-  .header_li {
+}
+
+.header_li {
     margin-right: 40px;
-  }
-  
-  .header_li:last-child {
+}
+
+.header_li:last-child {
     margin-right: 0;
-  }
-  
-  .header_li a {
+}
+
+.header_li a {
     color: #fff;
     text-decoration: none;
-  }
-  
+}
 
-  .login {
-    margin-left:500px;
+
+.login {
+    margin-left:700px;
     border: 2px solid #7B1FA2;
-  }
+}
 
-  .add {
-      margin-left: 50px;
-      border: 2px solid #7B1FA2;
-    }
 
-  .login:hover, 
-  .registration:hover,
-  .add:hover {
+.add {
+    margin-left: 50px;
+    border: 2px solid #7B1FA2;
+}
+
+.login:hover,
+.registration:hover,
+.add:hover {
     background-color: #7B1FA2;
     color: red;
-  }
+}
 
-  .logout-without-add{
-  margin-left: 750px;
-  }
-
-  .administration{
+.logout-without-add{
+    margin-left: 750px;
+}
+.auth{
+    margin-left: 800px;
+}
+.exit{
+    margin-left: 500px;
+}
+.administration{
     margin-left: 0px;
-  }
-  .button{
+}
+.button{
     border: 2px solid #7B1FA2;
     font-weight: 550;
     font-size: 16px;
     border-radius: 5px;
     padding: 8px 12px;
     transition: background-color 0.3s ease, color 0.3s ease;
-  }
+}

@@ -2,12 +2,14 @@ package by.yachnikzakhar.newsmanagement.controller.impl;
 
 import by.yachnikzakhar.newsmanagement.beans.News;
 import by.yachnikzakhar.newsmanagement.controller.Command;
+import by.yachnikzakhar.newsmanagement.controller.session.SessionConstants;
 import by.yachnikzakhar.newsmanagement.service.NewsService;
 import by.yachnikzakhar.newsmanagement.service.ServiceException;
 import by.yachnikzakhar.newsmanagement.service.ServiceProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -15,26 +17,32 @@ import java.time.LocalDate;
 import static by.yachnikzakhar.newsmanagement.controller.constants.NewsParameters.*;
 import static by.yachnikzakhar.newsmanagement.controller.constants.StatusParameters.ACTIVE;
 
+public class AddNewsCommand implements Command {
 
-public class ChangeNewsCommand implements Command {
-    private NewsService newsService = ServiceProvider.getInstance().getNewsService();
-
+    NewsService newsService = ServiceProvider.getInstance().getNewsService();
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        int newsId = Integer.parseInt(request.getParameter(ID));
+        int userId;
+        HttpSession session = request.getSession(false);
+        if(session != null) {
+            userId = (int) session.getAttribute(SessionConstants.USER_ID);
+        } else {
+            response.sendRedirect("Controller?command=go_to_error_page&error=authorization_error");
+            return;
+        }
 
-        News news = new News(newsId, request.getParameter(TITLE),
+        News news = new News(request.getParameter(TITLE),
                 LocalDate.parse(request.getParameter(DATE)),
                 request.getParameter(BRIEF), request.getParameter(CONTENT),
-                ACTIVE, Integer.parseInt(request.getParameter(USER_ID)));
+                ACTIVE, userId);
 
         try {
-            newsService.update(news);
-            response.sendRedirect("Controller?command=show_news&id=" + newsId);
+            newsService.add(news);
+            response.sendRedirect("Controller?command=go_to_main_page");
         } catch (ServiceException e) {
-            // TODO: Add error logging here
-            response.sendRedirect("Controller?command=go_to_error_page"); // TODO: Add error message on show_page
+            //TODO: add error logging here
+            response.sendRedirect("Controller?command=go_to_error_page&error=add_news_error");
         }
     }
 }

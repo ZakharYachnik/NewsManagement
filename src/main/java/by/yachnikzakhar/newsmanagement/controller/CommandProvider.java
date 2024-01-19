@@ -18,10 +18,12 @@ public final class CommandProvider {
         commands.put(CommandName.GO_TO_ADD_NEWS, new GoToAddNewsCommand());
         commands.put(CommandName.SHOW_NEWS, new ShowNewsCommand());
         commands.put(CommandName.CHANGE_NEWS, new ChangeNewsCommand());
-        commands.put(CommandName.DELETE_NEWS, new DeleteNewsCommand());
+        commands.put(CommandName.GO_TO_CHANGE_NEWS, new GoToChangeNewsCommand());
+        commands.put(CommandName.DELETE_NEWS, new BlockNewsCommand());
         commands.put(CommandName.LOGOUT, new LogoutCommand());
         commands.put(CommandName.GO_TO_ADMINISTRATION, new GoToAdministration());
-        commands.put(CommandName.GO_TO_MAIN_PAGE_AFTER_SIGN_IN, new GoToMainPageAfterSignIn());
+        commands.put(CommandName.GO_TO_MAIN_PAGE, new GoToMainPageCommand());
+        commands.put(CommandName.ADD_NEWS, new AddNewsCommand());
     }
 
     public static CommandProvider getInstance() {

@@ -17,19 +17,6 @@ public class Controller extends HttpServlet {
 
     private final CommandProvider provider = CommandProvider.getInstance();
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        try {
-            ConnectionPool.getInstance().initPoolData();
-        } catch (ConnectionPoolException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void destroy() {
-        ConnectionPool.getInstance().dispose();
-    }
 
 
     @Override

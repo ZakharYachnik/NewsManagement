@@ -9,11 +9,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class GoToAddNewsCommand implements Command {
+import static by.yachnikzakhar.newsmanagement.controller.session.SessionConstants.PREV_REQUEST;
 
-    private NewsService newsService = ServiceProvider.getInstance().getNewsService();
+public class GoToAddNewsCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String prevRequest = request.getRequestURI() + "?" + request.getQueryString();
+        request.getSession().setAttribute(PREV_REQUEST, prevRequest);
+
         request.getRequestDispatcher("WEB-INF/jsp/add_news_page.jsp").forward(request, response);
     }
 }

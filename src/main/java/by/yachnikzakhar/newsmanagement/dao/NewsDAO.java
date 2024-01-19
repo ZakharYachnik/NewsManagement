@@ -14,7 +14,7 @@ public interface NewsDAO {
     List<News> getInRange(int startId, int endId) throws NewsNotFoundException, DAOException;
     List<News> getFromEnd(int count) throws NewsNotFoundException, DAOException;
     List<News> findByPublicationDate(LocalDate date) throws DAOException, NewsNotFoundException;
-    List<News> findByTitle(String date) throws DAOException, NewsNotFoundException;
+    List<News> findByTitle(String titile) throws DAOException, NewsNotFoundException;
 
     List<News> findByUserId(int userId) throws DAOException, NewsNotFoundException;
     void update(News news) throws DAOException;

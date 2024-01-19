@@ -61,6 +61,7 @@ public class UserDAOImpl implements UserDAO {
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
                 generatedKeys.next();
                 generatedId = generatedKeys.getInt(1);
+                user.setId(generatedId);
                 generatedKeys.close();
             }
 
