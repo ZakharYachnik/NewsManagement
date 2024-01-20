@@ -22,7 +22,7 @@ public class SignInCommand implements Command {
         String password = request.getParameter(PASSWORD_PARAM);
 
         if(login == null || login.isEmpty() || password == null || password.isEmpty()){
-            response.sendRedirect("Controller?command=go_to_sign_in&error");
+            response.sendRedirect("Controller?command=go_to_sign_in&error=invalid_data");
             return;
         }
 
@@ -32,7 +32,7 @@ public class SignInCommand implements Command {
 
             response.sendRedirect("Controller?command=go_to_main_page");
         } catch (ServiceException e) {
-            response.sendRedirect("Controller?command=go_to_sign_in&error");
+            response.sendRedirect("Controller?command=go_to_sign_in&error=invalid_data");
         }
 
     }

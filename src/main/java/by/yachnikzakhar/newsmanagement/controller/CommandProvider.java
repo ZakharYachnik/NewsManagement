@@ -24,6 +24,8 @@ public final class CommandProvider {
         commands.put(CommandName.GO_TO_ADMINISTRATION, new GoToAdministration());
         commands.put(CommandName.GO_TO_MAIN_PAGE, new GoToMainPageCommand());
         commands.put(CommandName.ADD_NEWS, new AddNewsCommand());
+        commands.put(CommandName.CHANGE_LOCALE, new ChangeLocaleCommand());
+        commands.put(CommandName.GO_TO_ERROR_PAGE, new GoToErrorPage());
     }
 
     public static CommandProvider getInstance() {

@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 import="by.yachnikzakhar.newsmanagement.beans.User" import="java.util.List" pageEncoding="utf-8"%>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,20 +16,7 @@ import="by.yachnikzakhar.newsmanagement.beans.User" import="java.util.List" page
     <link rel="stylesheet" href="./css/administration.css">
     <title>Administration</title>
 </head>
-<header>
-    <nav class="header_nav">
-        <ul class="header_ul">
-            <h1>News Management</h1>
-            <li class="header_li"><a href="Controller?command=go_to_add_news" class="button add">Добавить
-                новость</a>
-            </li>
-            <li class="header_li"><a href="Controller?command=administration" class="button administration add">Администрирование</a>
-            </li>
-            <li class="header_li"><a href="Controller?command=logout" class="button logout-with-add login">Выйти</a>
-            </li>
-        </ul>
-    </nav>
-</header>
+<c:import url="/WEB-INF/jsp/blocks/header.jsp"/>
 
 <div class="container formDel">
     <form action="/Controller?command?=delete_user_account"  method="post" autocomplete="off">
@@ -66,42 +56,6 @@ import="by.yachnikzakhar.newsmanagement.beans.User" import="java.util.List" page
         <% } %>
 </div>
 
-<footer class="footer">
-    <div class="container">
-        <div class="footer__grid">
-            <div class="footer__column">
-                <h4 class="footer__title">О нас</h4>
-                <p class="footer__text">Наш сайт - это инновационная платформа,
-                    предназначенная для эффективного управления новостным контентом.</p>
-            </div>
-            <div class="footer__column">
-                <h4 class="footer__title">Контакты</h4>
-                <p class="footer__text">
-                    <i class="fas fa-map-marker-alt"></i> Минск, Беларусь
-                </p>
-                <p class="footer__text">
-                    <i class="fas fa-phone"></i> +375 (33) 330-53-20
-                </p>
-            </div>
-            <div class="footer__column">
-                <h4 class="footer__title">Социальные сети</h4>
-                <ul class="footer__social">
-                    <li><a
-                            href="https://instagram.com/zaherushka?igshid=ZGUzMzM3NWJiOQ=="><i
-                            class="fab fa-instagram">instagram: @zaharushka</i></a></li>
-                    <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-                </ul>
-            </div>
-            <div class="footer__column">
-                <h4 class="footer__title">Навигация</h4>
-                <ul class="footer__nav">
-                    <li><a href="#">Авторизация</a></li>
-                    <li><a href="#">Регистрация</a></li>
-                </ul>
-            </div>
-        </div>
-        <p class="footer__copy">&copy; 2023 NewsManagment. Все права защищены.</p>
-    </div>
-</footer>
+<c:import url="/WEB-INF/jsp/blocks/footer.jsp"/>
 </body>
 </html>

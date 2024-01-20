@@ -24,16 +24,11 @@ public class AddNewsCommand implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         int userId;
-        HttpSession session = request.getSession(false);
-        if(session != null) {
-            userId = (int) session.getAttribute(SessionConstants.USER_ID);
-        } else {
-            response.sendRedirect("Controller?command=go_to_error_page&error=authorization_error");
-            return;
-        }
+        HttpSession session = request.getSession();
+        userId = (int) session.getAttribute(SessionConstants.USER_ID);
 
         News news = new News(request.getParameter(TITLE),
-                LocalDate.parse(request.getParameter(DATE)),
+                LocalDate.now(),
                 request.getParameter(BRIEF), request.getParameter(CONTENT),
                 ACTIVE, userId);
 

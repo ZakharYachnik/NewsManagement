@@ -8,8 +8,8 @@ pageEncoding="utf-8"%>
 <head>
     <meta charset="UTF-8">
     <title>Новость</title>
-    <link rel="stylesheet" href="./css/header_footer.css">
-    <link rel="stylesheet" href="./css/news.css">
+    <link rel="stylesheet" href="./css/header_foooter.css">
+    <link rel="stylesheet" href="./css/new.css">
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css">
 </head>

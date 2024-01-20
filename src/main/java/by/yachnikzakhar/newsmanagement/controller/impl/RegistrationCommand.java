@@ -34,7 +34,7 @@ public class RegistrationCommand implements Command {
         String phoneNumber = request.getParameter(PHONE_NUMBER_PARAM).trim();
         String email = request.getParameter(EMAIL_PARAM).trim();
 
-        if(userDataValidation.checkRegistrationData(login, password, fullName, phoneNumber)){
+        if(!userDataValidation.checkRegistrationData(login, password, fullName, phoneNumber)){
             response.sendRedirect("Controller?command=go_to_registration&error=validation_error");
             return;
         }
