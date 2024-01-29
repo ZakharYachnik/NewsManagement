@@ -9,6 +9,8 @@ import by.yachnikzakhar.newsmanagement.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
@@ -16,6 +18,8 @@ public class SignInCommand implements Command {
     private static final String LOGIN_PARAM = "login";
     private static final String PASSWORD_PARAM = "password";
     private final UserService userService = ServiceProvider.getInstance().getUserService();
+    private static final Logger logger = LogManager.getLogger(SignInCommand.class);
+
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter(LOGIN_PARAM);
@@ -32,6 +36,7 @@ public class SignInCommand implements Command {
 
             response.sendRedirect("Controller?command=go_to_main_page");
         } catch (ServiceException e) {
+            logger.error(e);
             response.sendRedirect("Controller?command=go_to_sign_in&error=invalid_data");
         }
 

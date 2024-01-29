@@ -12,6 +12,8 @@ import by.yachnikzakhar.newsmanagement.util.validation.ValidationProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,6 +28,8 @@ public class RegistrationCommand implements Command {
     private UserDataValidation userDataValidation = ValidationProvider.getInstance().getUserDataValidation();
 
     private UserService userService = ServiceProvider.getInstance().getUserService();
+
+    private static final Logger logger = LogManager.getLogger(RegistrationCommand.class);
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter(LOGIN_PARAM).trim();
@@ -45,7 +49,7 @@ public class RegistrationCommand implements Command {
                 fullName,
                 phoneNumber,
                 email,
-                "ACTIVE",
+                "active",
                 Arrays.asList(Roles.USER.toString())
         );
 
@@ -55,6 +59,7 @@ public class RegistrationCommand implements Command {
 
             response.sendRedirect("Controller?command=go_to_main_page");
         }catch (ServiceException exception){
+            logger.error(exception);
             response.sendRedirect("Controller?command=go_to_registration&error=registration_error");
         }
 

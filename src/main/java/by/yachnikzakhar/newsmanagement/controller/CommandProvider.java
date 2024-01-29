@@ -26,6 +26,9 @@ public final class CommandProvider {
         commands.put(CommandName.ADD_NEWS, new AddNewsCommand());
         commands.put(CommandName.CHANGE_LOCALE, new ChangeLocaleCommand());
         commands.put(CommandName.GO_TO_ERROR_PAGE, new GoToErrorPage());
+        commands.put(CommandName.BLOCK_USER, new BlockUserCommand());
+        commands.put(CommandName.ADD_USER_ADMIN_ROLE, new AddUserAdminRoleCommand());
+        commands.put(CommandName.REMOVE_USER_ADMIN_ROLE, new RemoveUserAdminRoleCommand());
     }
 
     public static CommandProvider getInstance() {

@@ -8,10 +8,14 @@ import by.yachnikzakhar.newsmanagement.dao.exceptions.DAOException;
 import by.yachnikzakhar.newsmanagement.dao.UserDAO;
 import by.yachnikzakhar.newsmanagement.dao.exceptions.UserNotFoundException;
 import by.yachnikzakhar.newsmanagement.service.ServiceException;
+import by.yachnikzakhar.newsmanagement.service.impl.UserServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
@@ -22,7 +26,7 @@ public class UserDAOImpl implements UserDAO {
     private static final String COLUMN_PHONE_NUMBER = "phone_number";
     private static final String COLUMN_EMAIL = "email";
     private static final String COLUMN_STATUS = "status";
-    private static final String STATUS_BLOCKED = "BLOCKED";
+    private static final String STATUS_BLOCKED = "blocked";
 
     private static final String INSERT_USER_QUERY = "insert into users(login, password, full_name, phone_number, email, status) values(?, ?, ?, ?, ?, ?)";
     private static final String SELECT_USER_BY_LOGIN_QUERY = "select * from users where login=?";
@@ -32,8 +36,13 @@ public class UserDAOImpl implements UserDAO {
     private static final String BLOCK_USER_QUERY = "update users set status=? where id=?";
     private static final String SELECT_USER_ROLES_QUERY = "select r.role from roles r join users_has_roles ur on r.id = ur.roles_id join users u on u.id = ur.users_id where u.id = ?";
     private static final String INSERT_USER_ROLE_QUERY = "insert into users_has_roles (users_id, roles_id) values(?, ?)";
+    private static final String DELETE_USER_ROLE_QUERY = "delete from users_has_roles where users_id = ? and roles_id = ?";
+    private static final String ADMIN_ROLE = "ADMIN";
+    private static final String USER_ROLE = "USER";
 
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
+
+    private static final Logger logger = LogManager.getLogger(UserDAOImpl.class);
 
     @Override
     public void add(User user) throws DAOException {
@@ -55,6 +64,7 @@ public class UserDAOImpl implements UserDAO {
                 int result = preparedStatement.executeUpdate();
 
                 if (result == 0) {
+                    logger.error("User registration error in the system");
                     throw new DAOException("User registration error in the system");
                 }
 
@@ -73,6 +83,7 @@ public class UserDAOImpl implements UserDAO {
                 try {
                     connection.rollback();
                 } catch (SQLException e1) {
+                    logger.error("Transaction rollback error", e1);
                     throw new DAOException("Transaction rollback error", e);
                 }
             }
@@ -101,6 +112,7 @@ public class UserDAOImpl implements UserDAO {
 
             preparedStatement.executeBatch();
         } catch (SQLException e) {
+            logger.error("User roles insert error", e);
             throw new SQLException("User roles insert error", e);
         }
     }
@@ -110,10 +122,12 @@ public class UserDAOImpl implements UserDAO {
         User user = getByLogin(login);
 
         if (!BCrypt.checkpw(password, user.getPassword())) {
+            logger.error("Wrong password");
             throw new DAOException("Wrong password");
         }
 
         if (user.getStatus().equalsIgnoreCase(STATUS_BLOCKED)) {
+            logger.error("The user is blocked");
             throw new UserNotFoundException("The user is blocked");
         }
 
@@ -140,10 +154,11 @@ public class UserDAOImpl implements UserDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (!resultSet.next()) {
+                    logger.error("The user with this login was not found");
                     throw new UserNotFoundException("The user with this login was not found");
                 }
 
-                return new User(
+                 User user = new User(
                         resultSet.getInt(COLUMN_ID),
                         resultSet.getString(COLUMN_LOGIN),
                         resultSet.getString(COLUMN_PASSWORD),
@@ -152,8 +167,12 @@ public class UserDAOImpl implements UserDAO {
                         resultSet.getString(COLUMN_EMAIL),
                         resultSet.getString(COLUMN_STATUS)
                 );
+                user.setRoles(getUserRolesById(user.getId()));
+
+                return user;
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error(e);
             throw new DAOException(e);
         }
     }
@@ -167,10 +186,11 @@ public class UserDAOImpl implements UserDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (!resultSet.next()) {
+                    logger.error("The user with this id was not found");
                     throw new UserNotFoundException("The user with this id was not found");
                 }
 
-                return new User(
+                User user = new User(
                         resultSet.getInt(COLUMN_ID),
                         resultSet.getString(COLUMN_LOGIN),
                         resultSet.getString(COLUMN_PASSWORD),
@@ -179,8 +199,12 @@ public class UserDAOImpl implements UserDAO {
                         resultSet.getString(COLUMN_EMAIL),
                         resultSet.getString(COLUMN_STATUS)
                 );
+                user.setRoles(getUserRolesById(user.getId()));
+
+                return user;
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error(e);
             throw new DAOException(e);
         }
     }
@@ -194,7 +218,7 @@ public class UserDAOImpl implements UserDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 List<User> userList = new ArrayList<>();
                 while (resultSet.next()) {
-                    userList.add(new User(
+                    User user = new User(
                             resultSet.getInt(COLUMN_ID),
                             resultSet.getString(COLUMN_LOGIN),
                             resultSet.getString(COLUMN_PASSWORD),
@@ -202,11 +226,15 @@ public class UserDAOImpl implements UserDAO {
                             resultSet.getString(COLUMN_PHONE_NUMBER),
                             resultSet.getString(COLUMN_EMAIL),
                             resultSet.getString(COLUMN_STATUS)
-                    ));
+                    );
+                    user.setRoles(getUserRolesById(user.getId()));
+
+                    userList.add(user);
                 }
                 return userList;
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error(e);
             throw new DAOException(e);
         }
     }
@@ -227,27 +255,31 @@ public class UserDAOImpl implements UserDAO {
             int result = preparedStatement.executeUpdate();
 
             if (result == 0) {
+                logger.error("User update error in the system");
                 throw new DAOException("User update error in the system");
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("User update process error", e);
             throw new DAOException("User update process error", e);
         }
     }
 
     @Override
-    public void block(User user) throws DAOException {
+    public void block(int id) throws DAOException {
         try (Connection connection = connectionPool.takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(BLOCK_USER_QUERY)) {
 
             preparedStatement.setString(1, STATUS_BLOCKED);
-            preparedStatement.setInt(2, user.getId());
+            preparedStatement.setInt(2, id);
 
             int result = preparedStatement.executeUpdate();
 
             if (result == 0) {
+                logger.error("User block error in the system");
                 throw new DAOException("User block error in the system");
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("User block process error", e);
             throw new DAOException("User block process error", e);
         }
     }
@@ -262,6 +294,7 @@ public class UserDAOImpl implements UserDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (!resultSet.next()) {
+                logger.error("User roles not found");
                 throw new DAOException("User roles not found");
             }
 
@@ -273,7 +306,52 @@ public class UserDAOImpl implements UserDAO {
 
             return roles;
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error(e);
             throw new DAOException(e);
         }
     }
+
+    @Override
+    public void addUserAdminRole(int userId) throws DAOException {
+
+        try (Connection connection = connectionPool.takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_ROLE_QUERY)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, Roles.valueOf(ADMIN_ROLE).ordinal() + 1);
+
+            int result = preparedStatement.executeUpdate();
+
+            if (result == 0) {
+                logger.error("User role insert error in the system");
+                throw new DAOException("User role insert error in the system");
+            }
+
+        } catch (SQLException | ConnectionPoolException e) {
+            logger.error(e);
+            throw new DAOException(e);
+        }
+    }
+
+    @Override
+    public void removeUserAdminRole(int userId) throws DAOException {
+        try (Connection connection = connectionPool.takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER_ROLE_QUERY)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, Roles.valueOf(ADMIN_ROLE).ordinal() + 1);
+
+            int result = preparedStatement.executeUpdate();
+
+            if (result == 0) {
+                logger.error("User role delete error in the system");
+                throw new DAOException("User role delete error in the system");
+            }
+
+        } catch (SQLException | ConnectionPoolException e) {
+            logger.error(e);
+            throw new DAOException(e);
+        }
+    }
+
+
 }

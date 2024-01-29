@@ -1,24 +1,29 @@
 package by.yachnikzakhar.newsmanagement.service.impl;
 
 import by.yachnikzakhar.newsmanagement.beans.News;
+import by.yachnikzakhar.newsmanagement.controller.impl.SignInCommand;
 import by.yachnikzakhar.newsmanagement.dao.exceptions.DAOException;
 import by.yachnikzakhar.newsmanagement.dao.DAOProvider;
 import by.yachnikzakhar.newsmanagement.dao.NewsDAO;
 import by.yachnikzakhar.newsmanagement.dao.exceptions.NewsNotFoundException;
 import by.yachnikzakhar.newsmanagement.service.NewsService;
 import by.yachnikzakhar.newsmanagement.service.ServiceException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class NewsServiceImpl implements NewsService {
     private final NewsDAO newsDAO = DAOProvider.getInstance().getNewsDAO();
+    private static final Logger logger = LogManager.getLogger(NewsServiceImpl.class);
     @Override
     public void add(News user) throws ServiceException {
         try{
             newsDAO.add(user);
         }
         catch (DAOException exception){
+            logger.error(exception);
             throw new ServiceException(exception);
         }
     }
@@ -29,6 +34,7 @@ public class NewsServiceImpl implements NewsService {
             return newsDAO.getById(id);
         }
         catch (DAOException | NewsNotFoundException exception) {
+            logger.error(exception);
             throw new ServiceException(exception);
         }
     }
@@ -39,6 +45,7 @@ public class NewsServiceImpl implements NewsService {
             return newsDAO.getAll();
         }
         catch (DAOException | NewsNotFoundException exception) {
+            logger.error(exception);
             throw new ServiceException(exception);
         }
     }
@@ -49,6 +56,7 @@ public class NewsServiceImpl implements NewsService {
             newsDAO.update(news);
         }
         catch (DAOException exception){
+            logger.error(exception);
             throw new ServiceException(exception);
         }
     }
@@ -59,6 +67,7 @@ public class NewsServiceImpl implements NewsService {
             newsDAO.block(id);
         }
         catch (DAOException exception){
+            logger.error(exception);
             throw new ServiceException(exception);
         }
     }
@@ -68,6 +77,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.getInRange(startId, endId);
         } catch (NewsNotFoundException | DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -77,6 +87,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.getFromEnd(count);
         } catch (NewsNotFoundException | DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -86,6 +97,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.findByPublicationDate(date);
         } catch (NewsNotFoundException | DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -95,6 +107,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.findByTitle(title);
         } catch (NewsNotFoundException | DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -104,6 +117,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.findByUserId(userId);
         } catch (NewsNotFoundException | DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }

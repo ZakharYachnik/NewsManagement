@@ -7,6 +7,8 @@ import by.yachnikzakhar.newsmanagement.service.ServiceProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
@@ -17,6 +19,8 @@ public class ShowNewsCommand implements Command {
     private static final String SHOW_NEWS_PRESENTER = "show_news";
     private static final String NEWS_ATTRIBUTE_NAME = "news";
     private static final String REQUEST_PARAMETER_ID = "id";
+
+    private static final Logger logger = LogManager.getLogger(ShowNewsCommand.class);
 
     private NewsService newsService = ServiceProvider.getInstance().getNewsService();
     @Override
@@ -31,7 +35,7 @@ public class ShowNewsCommand implements Command {
             request.setAttribute(NEWS_ATTRIBUTE_NAME, newsService.getById(id));
             request.getRequestDispatcher("WEB-INF/jsp/news_page.jsp").forward(request, response);
         } catch (ServiceException e) {
-            // TODO: Add error logging here
+            logger.error(e);
             response.sendRedirect("Controller?command=go_to_error_page");
         }
     }

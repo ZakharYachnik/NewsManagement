@@ -18,7 +18,10 @@ public class AdminFilter implements Filter {
             CommandName.DELETE_NEWS,
             CommandName.GO_TO_CHANGE_NEWS,
             CommandName.ADD_NEWS,
-            CommandName.GO_TO_ADD_NEWS
+            CommandName.GO_TO_ADD_NEWS,
+            CommandName.BLOCK_USER,
+            CommandName.ADD_USER_ADMIN_ROLE,
+            CommandName.REMOVE_USER_ADMIN_ROLE
     );
 
     @Override

@@ -8,6 +8,8 @@ import by.yachnikzakhar.newsmanagement.service.ServiceProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -18,7 +20,7 @@ import static by.yachnikzakhar.newsmanagement.controller.constants.StatusParamet
 
 public class ChangeNewsCommand implements Command {
     private NewsService newsService = ServiceProvider.getInstance().getNewsService();
-
+    private static final Logger logger = LogManager.getLogger(ChangeNewsCommand.class);
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -33,8 +35,8 @@ public class ChangeNewsCommand implements Command {
             newsService.update(news);
             response.sendRedirect("Controller?command=show_news&id=" + newsId);
         } catch (ServiceException e) {
-            // TODO: Add error logging here
-            response.sendRedirect("Controller?command=go_to_error_page"); // TODO: Add error message on show_page
+            logger.error(e);
+            response.sendRedirect("Controller?command=go_to_error_page");
         }
     }
 }

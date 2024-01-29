@@ -6,9 +6,9 @@ import java.util.List;
 
 public class WorkWithParametersInSession {
 
-    public static void saveAuthorisationParametersInSession(HttpSession session, Integer userId ,String userName, List<String> roles, boolean isAdmin) {
+    public static void saveAuthorisationParametersInSession(HttpSession session, Integer userId ,String username, List<String> roles, boolean isAdmin) {
         session.setAttribute(SessionConstants.USER_ID, userId);
-        session.setAttribute(SessionConstants.USER_LOGIN, userName);
+        session.setAttribute(SessionConstants.USER_LOGIN, username);
         session.setAttribute(SessionConstants.ROLES, roles);
         session.setAttribute(SessionConstants.IS_ADMIN, isAdmin);
     }

@@ -9,6 +9,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
@@ -18,6 +20,7 @@ import static by.yachnikzakhar.newsmanagement.controller.session.SessionConstant
 public class GoToMainPageCommand implements Command {
 
     private NewsService newsService = ServiceProvider.getInstance().getNewsService();
+    private static final Logger logger = LogManager.getLogger(GoToMainPageCommand.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,7 +39,7 @@ public class GoToMainPageCommand implements Command {
 
             request.getRequestDispatcher("WEB-INF/jsp/pages/main_page.jsp").forward(request, response);
         } catch (ServiceException e) {
-            // TODO: Add error logging here
+            logger.error(e);
             response.sendRedirect("Controller?command=go_to_error_page");
         }
 

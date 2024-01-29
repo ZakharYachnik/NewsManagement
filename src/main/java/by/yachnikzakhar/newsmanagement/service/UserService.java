@@ -13,7 +13,10 @@ public interface UserService {
     User getByRoleId(int roleId) throws ServiceException;
     User getByLogin(String login) throws ServiceException;
     void update(User user) throws ServiceException;
-    void remove(User user) throws ServiceException;
+    void blockByLogin(int id) throws ServiceException;
 
     User authentication(String login, String password) throws ServiceException;
+
+    void addUserAdminRole(int userId) throws ServiceException;
+    void removeUserAdminRole(int userId) throws ServiceException;
 }

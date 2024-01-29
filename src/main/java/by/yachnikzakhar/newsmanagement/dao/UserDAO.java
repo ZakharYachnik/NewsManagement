@@ -14,9 +14,12 @@ public interface UserDAO {
     List<User> getFromEnd(int count) throws DAOException;
     User getByLogin(String login) throws DAOException, UserNotFoundException;
     void update(User user) throws DAOException;
-    void block(User user) throws DAOException;
+    void block(int id) throws DAOException;
 
     User authentication(String login, String password) throws DAOException, UserNotFoundException;
 
     List<String> getUserRolesById(int userId) throws DAOException;
+
+    void addUserAdminRole(int userId) throws DAOException;
+    void removeUserAdminRole(int userId) throws DAOException;
 }

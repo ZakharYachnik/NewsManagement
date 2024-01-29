@@ -6,6 +6,8 @@ import by.yachnikzakhar.newsmanagement.dao.connection.ConnectionPoolException;
 import by.yachnikzakhar.newsmanagement.dao.exceptions.DAOException;
 import by.yachnikzakhar.newsmanagement.dao.NewsDAO;
 import by.yachnikzakhar.newsmanagement.dao.exceptions.NewsNotFoundException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,6 +41,8 @@ public class NewsDAOImpl implements NewsDAO {
 
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
+    private static final Logger logger = LogManager.getLogger(UserDAOImpl.class);
+
     @Override
     public void add(News news) throws DAOException {
         try (Connection connection = connectionPool.takeConnection();
@@ -53,10 +57,11 @@ public class NewsDAOImpl implements NewsDAO {
             int result = preparedStatement.executeUpdate();
 
             if (result == 0) {
+                logger.error("Error adding news in the system");
                 throw new DAOException("Error adding news in the system");
             }
         } catch (SQLException | ConnectionPoolException e) {
-            e.printStackTrace();
+            logger.error("Error in the news adding process", e);
             throw new DAOException("Error in the news adding process", e);
         }
     }
@@ -70,6 +75,7 @@ public class NewsDAOImpl implements NewsDAO {
             preparedStatement.setInt(2, endId);
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 if (!resultSet.next()) {
+                    logger.error("News in range not found");
                     throw new NewsNotFoundException("News in range not found");
                 }
 
@@ -90,6 +96,7 @@ public class NewsDAOImpl implements NewsDAO {
                 return newsList;
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("Error in the news getting process", e);
             throw new DAOException("Error in the news getting process", e);
         }
     }
@@ -103,6 +110,7 @@ public class NewsDAOImpl implements NewsDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 if (!resultSet.next()) {
+                    logger.error("News from end not found");
                     throw new NewsNotFoundException("News from end not found");
                 }
 
@@ -123,6 +131,7 @@ public class NewsDAOImpl implements NewsDAO {
                 return newsList;
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("Error in the news getting process", e);
             throw new DAOException("Error in the news getting process", e);
         }
     }
@@ -135,6 +144,7 @@ public class NewsDAOImpl implements NewsDAO {
             preparedStatement.setObject(1, date);
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 if (!resultSet.next()) {
+                    logger.error("News with publication date " + date + " not found");
                     throw new NewsNotFoundException("News with publication date " + date + " not found");
                 }
 
@@ -155,6 +165,7 @@ public class NewsDAOImpl implements NewsDAO {
                 return newsList;
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("Error in the news getting process", e);
             throw new DAOException("Error in the news getting process", e);
         }
     }
@@ -167,6 +178,7 @@ public class NewsDAOImpl implements NewsDAO {
             preparedStatement.setString(1, title);
             try(ResultSet resultSet = preparedStatement.executeQuery();) {
                 if (!resultSet.next()) {
+                    logger.error("News with title " + title + " not found");
                     throw new NewsNotFoundException("News with title " + title + " not found");
                 }
                 List<News> newsList = new ArrayList<>();
@@ -187,6 +199,7 @@ public class NewsDAOImpl implements NewsDAO {
                 return newsList;
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("Error in the news getting process", e);
             throw new DAOException("Error in the news getting process", e);
         }
     }
@@ -199,6 +212,7 @@ public class NewsDAOImpl implements NewsDAO {
             preparedStatement.setInt(1, userId);
             try(ResultSet resultSet = preparedStatement.executeQuery();) {
                 if (!resultSet.next()) {
+                    logger.error("News with user id: " + userId + " not found");
                     throw new NewsNotFoundException("News with user id: " + userId + " not found");
                 }
 
@@ -219,6 +233,7 @@ public class NewsDAOImpl implements NewsDAO {
                 return newsList;
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("Error in the news getting process", e);
             throw new DAOException("Error in the news getting process", e);
         }
     }
@@ -231,6 +246,7 @@ public class NewsDAOImpl implements NewsDAO {
 
             try(ResultSet resultSet = preparedStatement.executeQuery();) {
                 if (!resultSet.next()) {
+                    logger.error("News with id: " + id + " not found");
                     throw new NewsNotFoundException("News with id: " + id + " not found");
                 }
 
@@ -246,6 +262,7 @@ public class NewsDAOImpl implements NewsDAO {
                 return news;
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("Error in the news getting process", e);
             throw new DAOException("Error in the news getting process", e);
         }
     }
@@ -258,6 +275,7 @@ public class NewsDAOImpl implements NewsDAO {
 
             List<News> newsList = new ArrayList<>();
             if (!resultSet.next()) {
+                logger.error("News not found");
                 throw new NewsNotFoundException("News not found");
             }
 
@@ -276,6 +294,7 @@ public class NewsDAOImpl implements NewsDAO {
 
             return newsList;
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("Error in the news getting process", e);
             throw new DAOException("Error in the news getting process", e);
         }
     }
@@ -296,9 +315,11 @@ public class NewsDAOImpl implements NewsDAO {
             int result = preparedStatement.executeUpdate();
 
             if (result == 0) {
+                logger.error("Error updating news in the system");
                 throw new DAOException("Error updating news in the system");
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("Error in the news updating process", e);
             throw new DAOException("Error in the news updating process", e);
         }
     }
@@ -314,9 +335,11 @@ public class NewsDAOImpl implements NewsDAO {
             int result = preparedStatement.executeUpdate();
 
             if (result == 0) {
+                logger.error("Error blocking news in the system");
                 throw new DAOException("Error blocking news in the system");
             }
         } catch (SQLException | ConnectionPoolException e) {
+            logger.error("Error in the news blocking process", e);
             throw new DAOException("Error in the news blocking process", e);
         }
     }
